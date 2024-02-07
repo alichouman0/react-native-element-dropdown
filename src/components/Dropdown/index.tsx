@@ -253,12 +253,18 @@ const DropdownComponent: <T>(
             const index = _.findIndex(listData, (e: any) =>
               _.isEqual(defaultValue, _.get(e, valueField))
             );
-            if (index > -1 && index <= listData.length - 1) {
-              refList?.current?.scrollToIndex({
-                index: index,
-                animated: false,
-              });
+            try {
+              if (index > -1 && index <= listData.length - 1) {
+                refList?.current?.scrollToIndex({
+                  index: index,
+                  animated: false,
+                });
+              }
+            } catch (error) {
+              console.warn("Error in react-native-element-dropdown "+error);
+              
             }
+          
           }
         }, 200);
       }
@@ -316,7 +322,7 @@ const DropdownComponent: <T>(
               .normalize('NFD')
               .replace(/[\u0300-\u036f]/g, '');
 
-            return item.indexOf(key) >= 0;
+            return item?.indexOf(key) >= 0;
           };
 
           const propSearchFunction = (e: any) => {
