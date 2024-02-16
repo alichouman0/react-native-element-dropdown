@@ -87,7 +87,10 @@ const DropdownComponent: <T>(
       onConfirmSelectItem,
       accessibilityLabel,
       itemAccessibilityLabelField,
-      mode = 'default',
+      mode = 'default', 
+      creatableNewItem = false,
+      addNewLabel = 'Add New + + +',
+      addNewIcon,
     } = props;
 
     const ref = useRef<View>(null);
@@ -98,6 +101,7 @@ const DropdownComponent: <T>(
     const [position, setPosition] = useState<any>();
     const [keyboardHeight, setKeyboardHeight] = useState<number>(0);
     const [searchText, setSearchText] = useState('');
+    const [newItem, setnewItem] = useState('');
 
     const { width: W, height: H } = Dimensions.get('window');
     const styleContainerVertical: ViewStyle = useMemo(() => {
@@ -262,9 +266,7 @@ const DropdownComponent: <T>(
               }
             } catch (error) {
               console.warn("Error in react-native-element-dropdown "+error);
-              
             }
-          
           }
         }, 200);
       }
@@ -334,10 +336,20 @@ const DropdownComponent: <T>(
           const dataSearch = data.filter(
             searchQuery ? propSearchFunction : defaultFilterFunction
           );
-          setListData(dataSearch);
+          if (creatableNewItem)
+          setListData(
+            dataSearch.length > 6
+              ? dataSearch
+              : [
+                  ...dataSearch,
+                  { [labelField]: addNewLabel, [valueField]: 0 },
+                ]
+          );
+        else setListData(dataSearch);
         } else {
           setListData(data);
         }
+        setnewItem(text);
       },
       [data, searchField, labelField, searchQuery]
     );
@@ -353,8 +365,18 @@ const DropdownComponent: <T>(
           onChangeText('');
         }
         onSearch('');
-        setCurrentValue(item);
-        onChange(item);
+        if (item.value == 0 && creatableNewItem) {
+          const theNewItem = { label: newItem, value: 0 };
+          setCurrentValue(theNewItem);
+          setListData((prev) => [
+            { [labelField]: newItem, [valueField]: 0 },
+            ...prev,
+          ]);
+          onChange(theNewItem);
+        } else {
+          setCurrentValue(item);
+          onChange(item);
+        }
         eventClose();
       },
       [
@@ -364,6 +386,7 @@ const DropdownComponent: <T>(
         onChangeText,
         onConfirmSelectItem,
         onSearch,
+        newItem
       ]
     );
 
@@ -445,6 +468,7 @@ const DropdownComponent: <T>(
                   >
                     {_.get(item, labelField)}
                   </Text>
+                  {item.value == 0 && addNewIcon && addNewIcon}
                 </View>
               )}
             </View>

@@ -53,6 +53,9 @@ export interface DropdownProps<T> {
   accessibilityLabel?: string;
   itemAccessibilityLabelField?: string;
   inverted?: boolean;
+  creatableNewItem?: boolean;
+  addNewLabel?: string;
+  addNewIcon?:React.ReactElement;
   mode?: 'default' | 'modal' | 'auto';
   onChange: (item: T) => void;
   renderLeftIcon?: (visible?: boolean) => JSX.Element | null | undefined;
