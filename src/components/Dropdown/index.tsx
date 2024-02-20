@@ -312,6 +312,8 @@ const DropdownComponent: <T>(
     const onSearch = useCallback(
       (text: string) => {
         if (text.length > 0) {
+          let hasExactMatch = false;
+
           const defaultFilterFunction = (e: any) => {
             const item = _.get(e, searchField || labelField)
               ?.toLowerCase()
@@ -324,11 +326,19 @@ const DropdownComponent: <T>(
               .normalize('NFD')
               .replace(/[\u0300-\u036f]/g, '');
 
+            if (item.toLowerCase().replace(/\s/g, "") === key.toLowerCase().replace(/\s/g, "")) {
+                hasExactMatch = true;
+            }
+
             return item?.indexOf(key) >= 0;
           };
 
           const propSearchFunction = (e: any) => {
             const labelText = _.get(e, searchField || labelField);
+
+            if (labelText.toLowerCase().replace(/\s/g, "") === text.toLowerCase().replace(/\s/g, "")) {
+              hasExactMatch = true;
+            }
 
             return searchQuery?.(text, labelText);
           };
@@ -336,16 +346,13 @@ const DropdownComponent: <T>(
           const dataSearch = data.filter(
             searchQuery ? propSearchFunction : defaultFilterFunction
           );
-          if (creatableNewItem)
-          setListData(
-            dataSearch.length > 6
-              ? dataSearch
-              : [
-                  ...dataSearch,
-                  { [labelField]: addNewLabel, [valueField]: 0 },
-                ]
-          );
-        else setListData(dataSearch);
+
+          if (creatableNewItem && (dataSearch.length == 0 || !hasExactMatch))
+          setListData([
+            { [labelField]: addNewLabel, [valueField]: 0 },
+            ...dataSearch,
+          ]);
+          else setListData(dataSearch);
         } else {
           setListData(data);
         }
