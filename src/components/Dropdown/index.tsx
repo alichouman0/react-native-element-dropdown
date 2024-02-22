@@ -321,12 +321,12 @@ const DropdownComponent: <T>(
               .normalize('NFD')
               .replace(/[\u0300-\u036f]/g, '');
             const key = text
-              .toLowerCase()
+              ?.toLowerCase()
               .replace(' ', '')
               .normalize('NFD')
               .replace(/[\u0300-\u036f]/g, '');
 
-            if (item.toLowerCase().replace(/\s/g, "") === key.toLowerCase().replace(/\s/g, "")) {
+            if (item?.toLowerCase().replace(/\s/g, "") === key?.toLowerCase().replace(/\s/g, "")) {
                 hasExactMatch = true;
             }
 
@@ -336,7 +336,7 @@ const DropdownComponent: <T>(
           const propSearchFunction = (e: any) => {
             const labelText = _.get(e, searchField || labelField);
 
-            if (labelText.toLowerCase().replace(/\s/g, "") === text.toLowerCase().replace(/\s/g, "")) {
+            if (labelText?.toLowerCase().replace(/\s/g, "") === text?.toLowerCase().replace(/\s/g, "")) {
               hasExactMatch = true;
             }
 
